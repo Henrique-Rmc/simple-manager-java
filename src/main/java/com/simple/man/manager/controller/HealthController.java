@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class HealthController {
     @GetMapping("/")
     public String healthCheck() {
-        return "Status: Online! Rodando no Azure";
+        return "Status: Online! Rodando no Azure agora sim";
     }
 }
