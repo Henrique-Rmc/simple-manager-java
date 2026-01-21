@@ -1,0 +1,35 @@
+name: Build and Deploy to Azure
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  AZURE_WEBAPP_NAME: "webapp01-az-dev" # Crie esse nome no Azure antes
+  ACR_NAME: "seuregistro.azurecr.io"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Log in to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }} # Você vai gerar isso no Azure
+
+    - name: Login to ACR
+      run: |
+        az acr login --name ${{ env.ACR_NAME }}
+
+    - name: Build and Push Docker Image
+      run: |
+        docker build . -t ${{ env.ACR_NAME }}/minha-app:${{ github.sha }}
+        docker push ${{ env.ACR_NAME }}/minha-app:${{ github.sha }}
+
+    - name: Deploy to App Service
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        images: '${{ env.ACR_NAME }}/minha-app:${{ github.sha }}'
