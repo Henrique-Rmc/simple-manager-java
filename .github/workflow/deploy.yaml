@@ -3,10 +3,13 @@ name: Build and Deploy to Azure
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: "webapp01-az-dev" # Crie esse nome no Azure antes
-  ACR_NAME: "seuregistro.azurecr.io"
+  AZURE_WEBAPP_NAME: "simple-manager-app" # Crie esse nome no Azure antes
+  ACR_NAME: "henriquerm02.azurecr.io"
+  IMAGE_NAME: "simple-manager-java"
+  RESOURCE_GROUP: "rg-simple-manager"
 
 jobs:
   build-and-deploy:
@@ -25,8 +28,8 @@ jobs:
 
     - name: Build and Push Docker Image
       run: |
-        docker build . -t ${{ env.ACR_NAME }}/minha-app:${{ github.sha }}
-        docker push ${{ env.ACR_NAME }}/minha-app:${{ github.sha }}
+        docker build . -t ${{ env.ACR_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        docker push ${{ env.ACR_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
     - name: Deploy to App Service
       uses: azure/webapps-deploy@v2
