@@ -7,7 +7,7 @@ on:
 
 env:
   AZURE_WEBAPP_NAME: "simple-manager-app" # Crie esse nome no Azure antes
-  ACR_NAME: "henriquerm02.azurecr.io"
+  ACR_NAME: "henriquerm02"
   IMAGE_NAME: "simple-manager-java"
   RESOURCE_GROUP: "rg-simple-manager"
 
@@ -28,11 +28,11 @@ jobs:
 
     - name: Build and Push Docker Image
       run: |
-        docker build . -t ${{ env.ACR_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-        docker push ${{ env.ACR_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        docker build . -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
     - name: Deploy to App Service
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        images: '${{ env.ACR_NAME }}/minha-app:${{ github.sha }}'
+        images: ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
